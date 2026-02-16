@@ -1,71 +1,70 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FiDownload } from "react-icons/fi";
-import resume from "../assets/FullStackResume.pdf"
+import { Link } from "react-router-dom";
+import resume from "../assets/FullStackResume.pdf";
 
 const Navbar = () => {
   const [theme, setTheme] = useState("light");
 
-  // Theme handler
-  const handleThemeChange = (e) => {
-    const selectedTheme = e.target.value;
-    setTheme(selectedTheme);
-    localStorage.setItem("chit-chatTheme", selectedTheme);
-    document.documentElement.setAttribute("data-theme", selectedTheme);
-  };
-
   useEffect(() => {
-    const savedTheme = localStorage.getItem("chit-chatTheme") || "light";
+    const savedTheme = localStorage.getItem("portfolioTheme") || "light";
     document.documentElement.setAttribute("data-theme", savedTheme);
     setTheme(savedTheme);
   }, []);
 
-  // Links array for mapping
-  const links = ["About", "Projects", "Skills", "Contact"];
+  const handleThemeChange = (e) => {
+    const selectedTheme = e.target.value;
+    setTheme(selectedTheme);
+    localStorage.setItem("portfolioTheme", selectedTheme);
+    document.documentElement.setAttribute("data-theme", selectedTheme);
+  };
 
   return (
-    <nav className="fixed w-full z-50 bg-[#0B0F19]/80 backdrop-blur-md shadow-lg">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-base-100 shadow-md">
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
         {/* Logo */}
-        <motion.h1
-          className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-purple-500"
-          animate={{ scale: [1, 1.1, 1], opacity: [0.8, 1, 0.9] }}
-          transition={{ duration: 2, repeat: Infinity }}
-        >
+        <Link to="/" className="text-2xl font-bold text-primary">
           Ajay Gour
-        </motion.h1>
+        </Link>
 
-        {/* Navigation Links */}
-        <ul className="hidden md:flex gap-8 text-[#F5F5F5] font-medium">
-          {links.map((link) => (
-            <motion.li
-              key={link}
-              className="cursor-pointer hover:text-[#A259FF] transition-colors duration-300 relative"
-              whileHover={{ scale: 1.1 }}
-            >
-              {link}
-              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-cyan-400 transition-all duration-300 hover:w-full"></span>
-            </motion.li>
-          ))}
+        {/* Links */}
+        <ul className="hidden md:flex gap-8 text-base-content font-medium">
+          <li>
+            <Link to="/about" className="hover:text-primary">
+              About
+            </Link>
+          </li>
+          <li>
+            <Link to="/projects" className="hover:text-primary">
+              Projects
+            </Link>
+          </li>
+          <li>
+            <Link to="/skills" className="hover:text-primary">
+              Skills
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className="hover:text-primary">
+              Contact
+            </Link>
+          </li>
         </ul>
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Resume Button */}
-
-          <motion.a
+          <a
             href={resume}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-4 py-2 rounded-md bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-semibold flex items-center gap-2 hover:scale-105 transition-transform duration-300"
-            whileHover={{ scale: 1.1 }}
+            className="btn btn-primary btn-sm"
           >
-            <FiDownload size={18} /> Resume
-          </motion.a>
+            <FiDownload /> Resume
+          </a>
 
-          {/* Theme Selector */}
           <select
-            className="select select-bordered select-sm min-w-[130px] bg-[#121212] text-[#F5F5F5] border-cyan-400 hover:border-purple-500"
+            className="select select-bordered select-sm"
             value={theme}
             onChange={handleThemeChange}
           >
