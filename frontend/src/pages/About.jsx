@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {Link} from 'react-router-dom'
 import { motion } from "framer-motion";
 import {
   FaReact,
@@ -10,18 +11,12 @@ import {
   FaFacebook,
   FaHtml5,
   FaCss3Alt,
+  FaLinkedin 
 } from "react-icons/fa";
-import {
-  SiMongodb,
-  SiExpress,
-  SiTailwindcss,
-  SiJavascript,
-} from "react-icons/si";
+import { SiMongodb, SiExpress, SiTailwindcss, SiJavascript } from "react-icons/si";
 import { TbBrandMysql } from "react-icons/tb";
 
 const About = () => {
-  const [isPaused, setIsPaused] = useState(false);
-
   const techStack = [
     { icon: <FaReact />, name: "React" },
     { icon: <SiJavascript />, name: "JavaScript" },
@@ -35,9 +30,18 @@ const About = () => {
     { icon: <TbBrandMysql />, name: "MySQL" },
   ];
 
+  // ✅ Social icons with real links
+  const socialLinks = [
+    { icon: FaGithub, url: "https://github.com/AjayGour09" },
+    { icon: FaInstagram, url: "https://www.instagram.com/er.__ajay_gour_7/" },
+    { icon: FaWhatsapp, url: "https://wa.me/919644029231" },
+    { icon: FaTwitter, url: "https://x.com/home" },
+    { icon: FaFacebook, url: "https://www.facebook.com/profile.php?id=100070965151399" },
+    { icon: FaLinkedin, url: "https://www.linkedin.com/in/ajay-gour09/" },
+  ];
+
   return (
     <div className="bg-base-100 text-base-content pt-24 px-6 md:px-20">
-
       {/* ================= ABOUT ================= */}
       <section className="text-center mb-20">
         <h1 className="text-4xl md:text-5xl font-bold">
@@ -53,29 +57,26 @@ const About = () => {
         </p>
 
         <div className="flex justify-center gap-6 mt-8 text-3xl">
-          {[FaGithub, FaInstagram, FaWhatsapp, FaTwitter, FaFacebook].map(
-            (Icon, i) => (
-              <motion.a
-                key={i}
-                href="#"
-                whileHover={{ scale: 1.3 }}
-                animate={{ y: [0, -6, 0] }}
-                transition={{ repeat: Infinity, duration: 2, delay: i * 0.2 }}
-                className="cursor-pointer text-primary"
-              >
-                <Icon />
-              </motion.a>
-            )
-          )}
+          {socialLinks.map((item, i) => (
+            <motion.a
+              key={i}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.3 }}
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 2, delay: i * 0.2 }}
+              className="cursor-pointer text-primary"
+            >
+              <item.icon />
+            </motion.a>
+          ))}
         </div>
       </section>
 
       {/* ================= TECH STACK ================= */}
       <section className="mb-24">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Technology Stack
-        </h2>
-
+        <h2 className="text-3xl font-bold text-center mb-12">Technology Stack</h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
           {techStack.map((tech, i) => (
             <motion.div
@@ -96,17 +97,13 @@ const About = () => {
 
       {/* ================= EDUCATION ================= */}
       <section className="mb-32">
-        <h2 className="text-3xl font-bold text-center mb-20">
-          Education
-        </h2>
-
+        <h2 className="text-3xl font-bold text-center mb-20">Education</h2>
         <EducationTimeline />
       </section>
 
       {/* ================= INTERNSHIPS ================= */}
       <section className="mb-24">
         <h2 className="text-3xl font-bold text-center mb-12">Internships</h2>
-
         <div className="grid md:grid-cols-3 gap-8">
           {[
             {
@@ -132,13 +129,11 @@ const About = () => {
             >
               <h3 className="font-semibold text-lg">{item.title}</h3>
               <p className="mt-3 opacity-80">{item.desc}</p>
-
               <div className="flex gap-3 mt-4 text-2xl text-primary">
                 {item.icons.map((Icon, index) => (
                   <span key={index}>{Icon}</span>
                 ))}
               </div>
-
               <button className="mt-4 px-4 py-2 border border-purple-500 rounded-lg hover:bg-purple-500 transition">
                 View Certificate
               </button>
@@ -148,94 +143,66 @@ const About = () => {
       </section>
 
       {/* ================= EXPERIENCE ================= */}
-      <section className="mb-32 overflow-hidden">
-        <h2 className="text-3xl font-bold text-center mb-16">
-          Experience
-        </h2>
-
-        <motion.div
-          className="flex gap-12"
-          animate={isPaused ? {} : { x: ["0%", "-50%"] }}
-          transition={{
-            repeat: Infinity,
-            duration: 25,
-            ease: "linear",
-          }}
-          onHoverStart={() => setIsPaused(true)}
-          onHoverEnd={() => setIsPaused(false)}
-        >
-          {[1, 2].map((_, repeatIndex) => (
-            <div key={repeatIndex} className="flex gap-12">
-              {[
-                {
-                  title: "Frontend Engineering",
-                  desc: "Designed scalable and high-performance UI systems using modern React architecture.",
-                  skills: ["React", "Tailwind", "Framer Motion", "UI/UX"],
-                },
-                {
-                  title: "Backend Development",
-                  desc: "Built secure REST APIs and optimized database structures.",
-                  skills: ["Node.js", "Express", "MongoDB", "JWT"],
-                },
-                {
-                  title: "Full Stack Projects",
-                  desc: "Delivered complete MERN stack applications with protected routes and deployment.",
-                  skills: ["MERN", "Auth", "CRUD", "Deployment"],
-                },
-              ].map((exp, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ scale: 1.05 }}
-                  className="relative min-w-[400px] min-h-[320px] 
-                             rounded-3xl p-[3px] 
-                             bg-gradient-to-br 
-                             from-cyan-400 via-blue-500 to-purple-600"
-                >
-                  <div className="rounded-3xl bg-base-100 p-8 h-full flex flex-col justify-between shadow-xl">
-                    <div>
-                      <h3 className="text-2xl font-bold mb-4 
-                                     bg-gradient-to-r from-cyan-400 to-purple-500 
-                                     bg-clip-text text-transparent">
-                        {exp.title}
-                      </h3>
-                      <p className="opacity-80 text-sm mb-6">{exp.desc}</p>
-                    </div>
-
-                    <div className="flex flex-wrap gap-3">
-                      {exp.skills.map((skill, idx) => (
-                        <span
-                          key={idx}
-                          className="px-4 py-1 text-xs rounded-full 
-                                     bg-gradient-to-r 
-                                     from-cyan-500/20 to-purple-500/20 
-                                     border border-cyan-400/40"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+      <section className="mb-40 py-16 relative">
+        <h2 className="text-3xl font-bold text-center mb-16">Experience</h2>
+        <div className="flex justify-center gap-8 flex-wrap">
+          {[
+            {
+              title: "Frontend Engineering",
+              desc: "Designed scalable, reusable and performance-optimized UI systems using modern React architecture with component-driven development approach.",
+              skills: ["React", "Tailwind", "Framer Motion", "UI/UX"],
+            },
+            {
+              title: "Backend Development",
+              desc: "Built secure REST APIs with authentication, database optimization, validation middleware and structured server architecture.",
+              skills: ["Node.js", "Express", "MongoDB", "JWT"],
+            },
+            {
+              title: "Full Stack Projects",
+              desc: "Delivered complete MERN applications including authentication, CRUD operations, protected routing and cloud deployment.",
+              skills: ["MERN", "Auth", "CRUD", "Deployment"],
+            },
+          ].map((exp, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.06, y: -6 }}
+              className="w-full md:w-[360px] rounded-3xl p-[3px] bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 shadow-2xl"
+            >
+              <div className="rounded-3xl bg-base-100 p-8 flex flex-col justify-between shadow-xl h-full">
+                <div>
+                  <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+                    {exp.title}
+                  </h3>
+                  <p className="opacity-80 text-sm leading-relaxed mb-6">{exp.desc}</p>
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  {exp.skills.map((skill, idx) => (
+                    <span
+                      key={idx}
+                      className="px-4 py-1 text-xs rounded-full bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-400/40"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
       </section>
 
       {/* ================= CONTACT ================= */}
-      <section className="text-center mb-20">
-        <h2 className="text-3xl font-bold mb-8">Let’s Work Together</h2>
-
-        <div className="flex justify-center gap-6">
-          <motion.a whileHover={{ scale: 1.1 }} href="#" className="btn btn-primary px-8">
-            Hire Me
-          </motion.a>
-
-          <motion.a whileHover={{ scale: 1.1 }} href="#" className="btn btn-outline btn-primary px-8">
-            Let’s Connect
-          </motion.a>
-        </div>
-      </section>
+      <div className="text-center">
+        <h2 className="text-3xl font-bold mb-6">Let's Work Together 🚀</h2>
+        <p className="text-gray-400 max-w-2xl mx-auto mb-8">
+          I am always excited to collaborate on innovative projects.
+          Let’s connect and build something amazing together!
+        </p>
+        <button className="relative px-8 py-3 mb-[80px] mt-8 border-2 border-purple-500 rounded-lg overflow-hidden group">
+          <Link to="/contact" className="relative z-10">Let’s Connect</Link>
+          <span className="absolute right-0 top-0 h-full w-1 bg-purple-500 animate-pulse"></span>
+        </button>
+      </div>
     </div>
   );
 };
@@ -243,7 +210,6 @@ const About = () => {
 export default About;
 
 /* ================= EDUCATION COMPONENT ================= */
-
 function EducationTimeline() {
   const educationData = [
     {
@@ -265,21 +231,12 @@ function EducationTimeline() {
 
   return (
     <motion.div className="relative max-w-5xl mx-auto">
-
       <motion.div
         animate={{
-          boxShadow: [
-            "0 0 10px #00f2ff",
-            "0 0 30px #a855f7",
-            "0 0 10px #00f2ff",
-          ],
+          boxShadow: ["0 0 10px #00f2ff", "0 0 30px #a855f7", "0 0 10px #00f2ff"],
         }}
         transition={{ repeat: Infinity, duration: 1.5 }}
-        className="absolute left-1/2 -translate-x-1/2 
-                   w-[6px] h-full 
-                   bg-gradient-to-b 
-                   from-cyan-400 via-purple-500 to-cyan-400 
-                   rounded-full"
+        className="absolute left-1/2 -translate-x-1/2 w-[6px] h-full bg-gradient-to-b from-cyan-400 via-purple-500 to-cyan-400 rounded-full"
       />
 
       {educationData.map((edu, i) => (
@@ -288,22 +245,17 @@ function EducationTimeline() {
           initial={{ opacity: 0, x: i % 2 === 0 ? -100 : 100 }}
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className={`relative mb-24 flex ${
-            i % 2 === 0 ? "justify-start" : "justify-end"
-          }`}
+          className={`relative mb-24 flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
         >
-          <div className="absolute left-1/2 -translate-x-1/2 
-                          w-5 h-5 bg-cyan-400 rounded-full 
-                          shadow-[0_0_20px_#00f2ff] z-10"></div>
+          <div
+            className="absolute left-1/2 -translate-x-1/2 w-5 h-5 bg-cyan-400 rounded-full shadow-[0_0_20px_#00f2ff] z-10"
+          ></div>
 
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="bg-base-200 p-6 rounded-xl w-full md:w-[45%] 
-                       border border-cyan-400/30 shadow-lg"
+            className="bg-base-200 p-6 rounded-xl w-full md:w-[45%] border border-cyan-400/30 shadow-lg"
           >
-            <h3 className="text-xl font-bold text-cyan-400">
-              {edu.title}
-            </h3>
+            <h3 className="text-xl font-bold text-cyan-400">{edu.title}</h3>
             <p className="mt-2 opacity-80">{edu.school}</p>
             <p className="mt-3 text-sm opacity-70">{edu.desc}</p>
           </motion.div>
