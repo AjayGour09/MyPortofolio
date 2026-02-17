@@ -19,7 +19,8 @@ const Home = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1 }}
           >
-            Hey, I'm Ajay Gour
+            <span className="text-sm text-red-600 font-semibold">HELLO, THERE WELCOME TO MY SITE</span> <br />
+            <p className="text-6xl pt-5 font-monospace"> I'm Ajay Gour</p>
           </motion.h1>
 
           <motion.p className="mt-6 text-lg md:text-2xl font-medium">
