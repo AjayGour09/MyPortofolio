@@ -132,7 +132,7 @@ const About = () => {
       </section>
 
       {/* ================= TECH STACK ================= */}
-      <section className="mb-24">
+      <section className="mb-26">
         <h2 className="text-3xl font-bold text-center mb-12">Technology Stack</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
           {techStack.map((tech, i) => (
