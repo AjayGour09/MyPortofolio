@@ -1031,7 +1031,7 @@ function EducationTimeline() {
             className="bg-base-200 p-6 rounded-xl w-full md:w-[45%] border border-cyan-400/30 shadow-lg"
           >
             <h3 className="text-xl font-bold text-cyan-400">{edu.title}</h3>
-            <p className="mt-2 opacity-80">{edu.school}</p>
+            <p className="mt-2 opacity-90">{edu.school}</p>
             <p className="mt-3 text-sm opacity-70">{edu.desc}</p>
           </motion.div>
         </motion.div>
