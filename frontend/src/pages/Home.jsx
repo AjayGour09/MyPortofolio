@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Typewriter } from "react-simple-typewriter";
 import img from "../assets/myimg.jpeg";
 import { Link } from "react-router-dom";
+import About from './About.jsx'
 
 const Home = () => {
   return (
@@ -72,6 +73,7 @@ const Home = () => {
         </div>
 
       </div>
+      <About />
     </section>
   );
 };

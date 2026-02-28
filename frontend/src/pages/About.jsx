@@ -21,12 +21,7 @@ import {
   FaLinkedin,
   FaExternalLinkAlt,
 } from "react-icons/fa";
-import {
-  SiMongodb,
-  SiExpress,
-  SiTailwindcss,
-  SiJavascript,
-} from "react-icons/si";
+import { SiMongodb, SiExpress, SiTailwindcss, SiJavascript } from "react-icons/si";
 import { TbBrandMysql } from "react-icons/tb";
 
 /* ===================== CountUp ===================== */
@@ -72,29 +67,15 @@ const ProgressRing = ({
       className="rounded-2xl"
     >
       <div className="relative rounded-2xl bg-base-100/30 border border-white/10 px-4 py-4 text-center overflow-hidden">
-        <p className="text-[10px] uppercase tracking-widest opacity-65">
-          {label}
-        </p>
-        {sub ? (
-          <p className="text-[10px] opacity-55 -mt-0.5">{sub}</p>
-        ) : (
-          <div className="h-[14px]" />
-        )}
+        <p className="text-[10px] uppercase tracking-widest opacity-65">{label}</p>
+        {sub ? <p className="text-[10px] opacity-55 -mt-0.5">{sub}</p> : <div className="h-[14px]" />}
 
         <div className="mx-auto mt-2 w-fit relative">
           <svg width={size} height={size} className="block">
             <defs>
               <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
-                <stop
-                  offset="0%"
-                  stopColor="rgb(34,211,238)"
-                  stopOpacity="0.95"
-                />
-                <stop
-                  offset="100%"
-                  stopColor="rgb(168,85,247)"
-                  stopOpacity="0.95"
-                />
+                <stop offset="0%" stopColor="rgb(34,211,238)" stopOpacity="0.95" />
+                <stop offset="100%" stopColor="rgb(168,85,247)" stopOpacity="0.95" />
               </linearGradient>
             </defs>
 
@@ -160,9 +141,9 @@ const ProgressRing = ({
   );
 };
 
-/* ===================== Internship Section (IMPROVED) ===================== */
+/* ===================== Internship Section (NEW DESIGN) ===================== */
 function InternshipSection({ internships }) {
-  const items = internships || [];
+  const items = useMemo(() => internships || [], [internships]);
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -182,23 +163,20 @@ function InternshipSection({ internships }) {
     setModalTitle("");
   };
 
-  const next = () => setActive((p) => (p + 1) % items.length);
-  const prev = () =>
-    setActive((p) => (p === 0 ? items.length - 1 : p - 1));
+  // Auto-advance (recruiter-friendly, no 3D carousel)
+  const prog = useMotionValue(0);
+  const progW = useTransform(prog, (v) => `${v}%`);
 
-  // auto rotate
   useEffect(() => {
-    if (paused || items.length <= 1) return;
-    const t = setInterval(next, 5000);
-    return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paused, items.length]);
+    if (!items.length) return;
 
-  // keyboard
-  useEffect(() => {
     const onKey = (e) => {
-      if (e.key === "ArrowRight") next();
-      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+        setActive((p) => (p + 1) % items.length);
+      }
+      if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+        setActive((p) => (p === 0 ? items.length - 1 : p - 1));
+      }
       if (e.key === "Escape") closeCert();
     };
     window.addEventListener("keydown", onKey);
@@ -206,26 +184,33 @@ function InternshipSection({ internships }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items.length]);
 
-  // progress bar (5s)
-  const prog = useMotionValue(0);
-  const progW = useTransform(prog, (v) => `${v}%`);
-
   useEffect(() => {
-    if (paused) return;
+    if (!items.length) return;
+    if (paused || items.length <= 1) return;
+
     prog.set(0);
-    const anim = animate(prog, 100, { duration: 5, ease: "linear" });
-    return () => anim.stop();
+    const anim = animate(prog, 100, { duration: 6, ease: "linear" });
+    const t = setInterval(() => {
+      setActive((p) => (p + 1) % items.length);
+    }, 6000);
+
+    return () => {
+      clearInterval(t);
+      anim.stop();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, paused]);
+  }, [active, paused, items.length]);
+
+  const current = items[active];
 
   if (!items.length) return null;
 
   return (
-    <section className="mb-32">
+    <section className="mb-36">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold">Professional Internships</h2>
         <p className="mt-3 text-sm opacity-70 max-w-2xl mx-auto">
-          Netflix-style spotlight • Glass neon cyber • Recruiter readable
+          Clean recruiter-first layout • Spotlight details • Certificate preview
         </p>
       </div>
 
@@ -235,205 +220,241 @@ function InternshipSection({ internships }) {
         onMouseLeave={() => setPaused(false)}
       >
         {/* ambient */}
-        <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-cyan-400/10 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[650px] h-[650px] bg-purple-500/10 rounded-full blur-3xl" />
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[720px] h-[720px] bg-cyan-400/10 rounded-full blur-3xl" />
+        <div className="absolute -bottom-32 left-1/2 -translate-x-1/2 w-[720px] h-[720px] bg-purple-500/10 rounded-full blur-3xl" />
 
-        {/* top controls */}
-        <div className="relative z-20 flex items-center justify-between mb-4">
-          <button
-            onClick={prev}
-            className="btn btn-outline btn-primary rounded-full btn-sm"
-          >
-            ← Prev
-          </button>
+        <div className="relative z-10 grid lg:grid-cols-[360px_1fr] gap-6 items-start">
+          {/* Left: Timeline List */}
+          <div className="rounded-3xl border border-white/10 bg-base-200/45 backdrop-blur-xl shadow-xl overflow-hidden">
+            <div className="p-5 border-b border-white/10">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs uppercase tracking-widest opacity-70">
+                  Timeline
+                </p>
+                <div className="text-xs opacity-70">
+                  <span className="font-bold text-cyan-300">{active + 1}</span> /{" "}
+                  {items.length}
+                </div>
+              </div>
 
-          <div className="text-xs opacity-70">
-            <span className="font-bold text-cyan-300">{active + 1}</span> /{" "}
-            {items.length}
-            <span className="hidden sm:inline"> • Hover = pause</span>
-          </div>
+              {/* progress line */}
+              <div className="mt-3 h-1 rounded-full bg-white/10 overflow-hidden">
+                <motion.div
+                  style={{ width: progW }}
+                  className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
+                />
+              </div>
 
-          <button
-            onClick={next}
-            className="btn btn-outline btn-primary rounded-full btn-sm"
-          >
-            Next →
-          </button>
-        </div>
+              <p className="mt-3 text-[11px] opacity-60">
+                Tip: Use <span className="font-bold">↑</span> /{" "}
+                <span className="font-bold">↓</span> keys • Hover = pause
+              </p>
+            </div>
 
-        {/* progress line */}
-        <div className="relative z-20 mb-6 px-2">
-          <div className="h-1 rounded-full bg-white/10 overflow-hidden">
-            <motion.div
-              style={{ width: progW }}
-              className="h-full bg-gradient-to-r from-cyan-400 to-purple-500"
-            />
-          </div>
-        </div>
-
-        {/* stage */}
-        <div className="relative z-10 h-[520px] [perspective:1400px]">
-          {items.map((card, i) => {
-            // circular offset
-            let offset = i - active;
-            const half = Math.floor(items.length / 2);
-            if (offset > half) offset -= items.length;
-            if (offset < -half) offset += items.length;
-
-            const isCenter = offset === 0;
-
-            return (
-              <motion.article
-                key={i}
-                initial={false}
-                animate={{
-                  x: offset * 260,
-                  scale: isCenter ? 1.1 : 0.78,
-                  rotateY: offset * -18,
-                  opacity: isCenter ? 1 : 0.22,
-                  filter: isCenter ? "blur(0px)" : "blur(1.2px)",
-                  z: isCenter ? 60 : -60 - Math.abs(offset) * 20,
-                }}
-                transition={{
-                  type: "spring",
-                  stiffness: 180,
-                  damping: 20,
-                  mass: 0.7,
-                }}
-                className="absolute left-1/2 top-1/2 w-[88%] sm:w-[540px] -translate-x-1/2 -translate-y-1/2"
-                style={{ transformStyle: "preserve-3d" }}
-              >
-                <Tilt
-                  tiltMaxAngleX={isCenter ? 13 : 7}
-                  tiltMaxAngleY={isCenter ? 13 : 7}
-                  scale={isCenter ? 1.03 : 1}
-                  transitionSpeed={1400}
-                  glareEnable={isCenter}
-                  glareMaxOpacity={0.15}
-                  glareColor="#ffffff"
-                  glarePosition="all"
-                  className="rounded-3xl"
-                >
-                  <div
-                    className={`relative rounded-3xl border overflow-hidden shadow-2xl ${
-                      isCenter
-                        ? "border-cyan-400/40 bg-gradient-to-br from-base-200/90 to-base-300/70"
-                        : "border-white/10 bg-base-200/55"
+            <div className="p-3">
+              {items.map((it, idx) => {
+                const isActive = idx === active;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setActive(idx)}
+                    className={`w-full text-left rounded-2xl p-4 mb-2 border transition-all relative overflow-hidden ${
+                      isActive
+                        ? "bg-gradient-to-r from-cyan-500/20 to-purple-500/15 border-cyan-400/35"
+                        : "bg-base-100/20 border-white/5 hover:border-cyan-400/20"
                     }`}
                   >
-                    {/* neon strip */}
-                    <div className="h-1 w-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500" />
-
-                    {/* shine */}
                     <motion.div
                       aria-hidden
                       initial={{ x: "-120%", opacity: 0 }}
-                      whileHover={isCenter ? { x: "120%", opacity: 1 } : {}}
-                      transition={{ duration: 0.85, ease: "easeOut" }}
+                      whileHover={{ x: "120%", opacity: 1 }}
+                      transition={{ duration: 0.7, ease: "easeOut" }}
                       className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent blur-md"
                     />
 
-                    {/* content */}
-                    <div className="p-7 sm:p-8">
-                      <div className="flex items-start justify-between gap-5">
+                    <div className="relative z-10">
+                      <div className="flex items-start justify-between gap-3">
                         <div>
-                          <h3 className="text-xl sm:text-2xl font-extrabold leading-tight">
-                            <span className="bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
-                              {card.title}
-                            </span>
-                          </h3>
-                          <p className="mt-2 text-xs tracking-widest uppercase opacity-60">
-                            {card.duration}
+                          <p
+                            className={`font-extrabold leading-snug ${
+                              isActive ? "text-cyan-200" : "text-base-content"
+                            }`}
+                          >
+                            {it.title}
+                          </p>
+                          <p className="mt-1 text-[11px] uppercase tracking-widest opacity-60">
+                            {it.duration}
                           </p>
                         </div>
 
-                        {/* Tech rail */}
-                        <div className="flex flex-col gap-3 text-2xl text-primary/90">
-                          {card.icons.map((ic, idx) => (
-                            <motion.span
+                        <span
+                          className={`badge badge-outline ${
+                            isActive ? "badge-primary" : "badge-ghost"
+                          }`}
+                        >
+                          {it.highlights?.length || 0} tags
+                        </span>
+                      </div>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {(it.icons || []).slice(0, 4).map((ic, i2) => (
+                          <span
+                            key={i2}
+                            className={`w-10 h-10 rounded-2xl grid place-items-center border ${
+                              isActive
+                                ? "bg-base-100/25 border-cyan-400/20"
+                                : "bg-base-100/20 border-white/10"
+                            } text-2xl text-primary/90`}
+                          >
+                            {ic}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: Featured Detail Card */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 14, scale: 0.99 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -14, scale: 0.99 }}
+              transition={{ duration: 0.35 }}
+              className="relative"
+            >
+              <Tilt
+                tiltMaxAngleX={8}
+                tiltMaxAngleY={8}
+                scale={1.01}
+                transitionSpeed={1400}
+                glareEnable
+                glareMaxOpacity={0.12}
+                glareColor="#ffffff"
+                glarePosition="all"
+                className="rounded-3xl"
+              >
+                <div className="relative rounded-3xl border border-cyan-400/20 bg-gradient-to-br from-base-200/85 to-base-300/60 backdrop-blur-xl shadow-2xl overflow-hidden">
+                  {/* top strip */}
+                  <div className="h-1 w-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500" />
+
+                  {/* glow */}
+                  <div className="absolute -top-24 -right-24 w-72 h-72 bg-cyan-400/10 rounded-full blur-3xl" />
+                  <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+
+                  {/* shine */}
+                  <motion.div
+                    aria-hidden
+                    initial={{ x: "-120%", opacity: 0 }}
+                    whileHover={{ x: "120%", opacity: 1 }}
+                    transition={{ duration: 0.9, ease: "easeOut" }}
+                    className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/10 to-transparent blur-md"
+                  />
+
+                  <div className="relative z-10 p-7 sm:p-9">
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
+                      <div>
+                        <p className="text-xs uppercase tracking-widest opacity-60">
+                          Featured Internship
+                        </p>
+
+                        <h3 className="mt-2 text-2xl sm:text-3xl font-extrabold leading-tight">
+                          <span className="bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
+                            {current.title}
+                          </span>
+                        </h3>
+
+                        <p className="mt-2 text-[11px] uppercase tracking-widest opacity-60">
+                          {current.duration}
+                        </p>
+
+                        <p className="mt-4 text-sm opacity-85 leading-relaxed max-w-2xl">
+                          {current.desc}
+                        </p>
+
+                        {/* highlights */}
+                        <div className="mt-6 flex flex-wrap gap-2">
+                          {(current.highlights || []).map((h, idx) => (
+                            <span
                               key={idx}
-                              whileHover={
-                                isCenter ? { scale: 1.15, rotate: 7, y: -2 } : {}
-                              }
-                              transition={{
-                                type: "spring",
-                                stiffness: 250,
-                                damping: 14,
-                              }}
-                              className="w-10 h-10 rounded-2xl grid place-items-center bg-base-100/25 border border-white/10"
+                              className="text-[10px] px-3 py-2 rounded-full border font-bold tracking-wide bg-cyan-400/10 border-cyan-400/20"
                             >
-                              {ic}
-                            </motion.span>
+                              {h}
+                            </span>
                           ))}
                         </div>
                       </div>
 
-                      <p className="mt-5 text-sm opacity-85 leading-relaxed">
-                        {card.desc}
-                      </p>
-
-                      {/* highlights */}
-                      <div className="mt-6 flex flex-wrap gap-2">
-                        {card.highlights.map((h, idx) => (
-                          <span
+                      {/* Tech rail */}
+                      <div className="flex sm:flex-col flex-wrap gap-3 text-2xl text-primary/90">
+                        {(current.icons || []).map((ic, idx) => (
+                          <motion.span
                             key={idx}
-                            className={`text-[10px] px-3 py-2 rounded-full border font-bold tracking-wide ${
-                              isCenter
-                                ? "bg-cyan-400/10 border-cyan-400/20"
-                                : "bg-base-100/25 border-white/10"
-                            }`}
+                            whileHover={{ scale: 1.12, rotate: 6, y: -2 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 260,
+                              damping: 14,
+                            }}
+                            className="w-12 h-12 rounded-2xl grid place-items-center bg-base-100/25 border border-white/10"
+                            title="Tech"
                           >
-                            {h}
-                          </span>
+                            {ic}
+                          </motion.span>
                         ))}
                       </div>
+                    </div>
 
-                      {/* footer */}
-                      <div className="mt-7 flex items-center justify-between gap-4">
+                    {/* Action bar */}
+                    <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 text-xs opacity-70">
+                        <span className="font-bold">Auto-rotate</span>
+                        <span className="opacity-60">•</span>
+                        <span>Hover to pause</span>
+                        <span className="opacity-60">•</span>
+                        <span className="hidden sm:inline">
+                          Use arrow keys
+                        </span>
+                      </div>
+
+                      <div className="flex flex-wrap gap-3">
                         <button
-                          onClick={() => openCert(card.certificateUrl, card.title)}
+                          onClick={() =>
+                            openCert(current.certificateUrl, current.title)
+                          }
                           className="btn btn-primary rounded-full btn-sm"
                         >
                           Preview Certificate
                         </button>
 
-                        <motion.div
-                          initial={{ opacity: 0.65 }}
-                          whileHover={isCenter ? { opacity: 1, x: 3 } : {}}
-                          className="flex items-center gap-2 text-xs opacity-70"
+                        <button
+                          onClick={() =>
+                            setActive((p) =>
+                              p === 0 ? items.length - 1 : p - 1
+                            )
+                          }
+                          className="btn btn-outline btn-primary rounded-full btn-sm"
                         >
-                          <span className="font-bold">Swipe</span>
-                          <FaExternalLinkAlt className="text-[10px]" />
-                        </motion.div>
+                          ← Prev
+                        </button>
+
+                        <button
+                          onClick={() => setActive((p) => (p + 1) % items.length)}
+                          className="btn btn-outline btn-primary rounded-full btn-sm"
+                        >
+                          Next → <FaExternalLinkAlt className="text-[10px]" />
+                        </button>
                       </div>
                     </div>
-
-                    {/* center glow */}
-                    {isCenter ? (
-                      <>
-                        <div className="absolute -top-24 -right-24 w-72 h-72 bg-cyan-400/10 rounded-full blur-3xl" />
-                        <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
-                      </>
-                    ) : null}
                   </div>
-                </Tilt>
-              </motion.article>
-            );
-          })}
-        </div>
-
-        {/* dots */}
-        <div className="relative z-20 mt-6 flex justify-center gap-3">
-          {items.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActive(i)}
-              className={`w-3 h-3 rounded-full transition-all ${
-                i === active ? "bg-cyan-400 scale-125" : "bg-white/20"
-              }`}
-              aria-label={`Go to internship ${i + 1}`}
-            />
-          ))}
+                </div>
+              </Tilt>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Modal */}
@@ -452,7 +473,7 @@ function InternshipSection({ internships }) {
                 exit={{ y: 18, scale: 0.98, opacity: 0 }}
                 transition={{ duration: 0.25 }}
                 onMouseDown={(e) => e.stopPropagation()}
-                className="w-full max-w-4xl rounded-3xl overflow-hidden border border-white/10 bg-base-200/80 backdrop-blur-2xl shadow-2xl"
+                className="w-full max-w-5xl rounded-3xl overflow-hidden border border-white/10 bg-base-200/80 backdrop-blur-2xl shadow-2xl"
               >
                 <div className="flex items-center justify-between gap-3 p-4 border-b border-white/10">
                   <p className="font-bold text-sm line-clamp-1">
@@ -468,7 +489,7 @@ function InternshipSection({ internships }) {
                     <iframe
                       title="Certificate Preview"
                       src={modalUrl}
-                      className="w-full h-[70vh]"
+                      className="w-full h-[72vh]"
                     />
                   </div>
 
@@ -590,12 +611,7 @@ const About = () => {
     {
       title: "Full Stack Projects",
       desc: "Delivered complete MERN applications with authentication, CRUD operations, protected routing, and deployment.",
-      skills: [
-        { name: "MERN" },
-        { name: "Auth" },
-        { name: "CRUD" },
-        { name: "Deployment" },
-      ],
+      skills: [{ name: "MERN" }, { name: "Auth" }, { name: "CRUD" }, { name: "Deployment" }],
       projects: [
         "Developed e-commerce app.",
         "Implemented JWT authentication.",
@@ -636,21 +652,16 @@ const About = () => {
         setActiveExp((prev) => (prev + 1) % experienceData.length);
       }
       if (e.key === "ArrowLeft") {
-        setActiveExp((prev) =>
-          prev === 0 ? experienceData.length - 1 : prev - 1
-        );
+        setActiveExp((prev) => (prev === 0 ? experienceData.length - 1 : prev - 1));
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, []);
+  }, [experienceData.length]);
 
   const maxProjects = Math.max(...experienceData.map((x) => x.stats.projectsDone));
-  const maxFeatures = Math.max(
-    ...experienceData.map((x) => x.stats.featuresImplemented)
-  );
+  const maxFeatures = Math.max(...experienceData.map((x) => x.stats.featuresImplemented));
   const maxUsers = Math.max(...experienceData.map((x) => x.stats.usersImpacted));
-
   const pct = (val, max) => (max ? Math.round((val / max) * 100) : 0);
 
   return (
@@ -663,11 +674,11 @@ const About = () => {
             Ajay Gour
           </span>
         </h1>
+
         <p className="mt-6 max-w-3xl mx-auto text-lg opacity-80 leading-relaxed">
-          Hi, I’m a MERN Stack Developer passionate about building scalable,
-          responsive, and user-friendly web applications. I specialize in React,
-          Node.js, Express, and MongoDB. Graduating in 2026, I am eager to
-          collaborate on innovative projects.
+          Hi, I’m a MERN Stack Developer passionate about building scalable, responsive,
+          and user-friendly web applications. I specialize in React, Node.js, Express,
+          and MongoDB. Graduating in 2026, I am eager to collaborate on innovative projects.
         </p>
 
         <div className="flex justify-center gap-6 mt-8 text-3xl">
@@ -691,6 +702,7 @@ const About = () => {
       {/* ================= TECH STACK ================= */}
       <section className="mb-26">
         <h2 className="text-3xl font-bold text-center mb-12">Technology Stack</h2>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 max-w-5xl mx-auto">
           {techStack.map((tech, i) => (
             <motion.div
@@ -725,7 +737,7 @@ const About = () => {
         <EducationTimeline />
       </section>
 
-      {/* ================= INTERNSHIPS (IMPROVED) ================= */}
+      {/* ================= INTERNSHIPS (NEW DESIGN) ================= */}
       <InternshipSection internships={internships} />
 
       {/* ================= EXPERIENCE ================= */}
@@ -772,23 +784,13 @@ const About = () => {
 
                     <div className="relative z-10 flex items-center justify-between gap-3">
                       <div>
-                        <p
-                          className={`font-bold ${
-                            activeTab ? "text-cyan-300" : "text-base-content"
-                          }`}
-                        >
+                        <p className={`font-bold ${activeTab ? "text-cyan-300" : "text-base-content"}`}>
                           {exp.title}
                         </p>
-                        <p className="text-xs opacity-60 mt-1 line-clamp-2">
-                          {exp.desc}
-                        </p>
+                        <p className="text-xs opacity-60 mt-1 line-clamp-2">{exp.desc}</p>
                       </div>
 
-                      <span
-                        className={`badge ${
-                          activeTab ? "badge-primary" : "badge-ghost"
-                        } badge-outline`}
-                      >
+                      <span className={`badge ${activeTab ? "badge-primary" : "badge-ghost"} badge-outline`}>
                         {exp.stats.projectsDone}+
                       </span>
                     </div>
@@ -843,9 +845,7 @@ const About = () => {
                     <div className="relative z-10">
                       <div className="flex flex-wrap items-start justify-between gap-6">
                         <div>
-                          <h3 className="text-3xl font-extrabold text-cyan-300">
-                            {active.title}
-                          </h3>
+                          <h3 className="text-3xl font-extrabold text-cyan-300">{active.title}</h3>
                           <p className="mt-3 text-sm opacity-80 leading-relaxed max-w-2xl">
                             {active.desc}
                           </p>
@@ -861,10 +861,7 @@ const About = () => {
                           <ProgressRing
                             label="Features"
                             value={active.stats.featuresImplemented}
-                            percent={pct(
-                              active.stats.featuresImplemented,
-                              maxFeatures
-                            )}
+                            percent={pct(active.stats.featuresImplemented, maxFeatures)}
                             sub="shipped"
                           />
                           <ProgressRing
@@ -877,18 +874,14 @@ const About = () => {
                       </div>
 
                       <div className="mt-7">
-                        <p className="text-sm font-bold text-primary mb-3">
-                          Skills
-                        </p>
+                        <p className="text-sm font-bold text-primary mb-3">Skills</p>
                         <div className="flex flex-wrap gap-2">
                           {active.skills.map((skill, idx) => (
                             <span
                               key={idx}
                               className="px-3 py-2 text-[11px] font-bold rounded-full bg-cyan-400/10 border border-cyan-400/25 text-cyan-200 flex items-center gap-2"
                             >
-                              {skill.icon && (
-                                <span className="text-base">{skill.icon}</span>
-                              )}
+                              {skill.icon && <span className="text-base">{skill.icon}</span>}
                               {skill.name}
                             </span>
                           ))}
@@ -897,9 +890,7 @@ const About = () => {
 
                       <div className="mt-8 grid md:grid-cols-2 gap-6">
                         <div className="rounded-2xl bg-base-100/25 border border-white/10 p-6">
-                          <p className="text-sm font-bold text-primary mb-3">
-                            Key Contributions
-                          </p>
+                          <p className="text-sm font-bold text-primary mb-3">Key Contributions</p>
                           <ul className="space-y-2 text-sm opacity-80">
                             {active.projects.map((proj, j) => (
                               <li key={j} className="flex gap-3">
@@ -911,19 +902,13 @@ const About = () => {
                         </div>
 
                         <div className="rounded-2xl bg-base-100/25 border border-white/10 p-6">
-                          <p className="text-sm font-bold text-primary mb-3">
-                            Tools & Tech
-                          </p>
+                          <p className="text-sm font-bold text-primary mb-3">Tools & Tech</p>
                           <div className="flex flex-wrap gap-3 text-3xl text-primary/90">
                             {active.techIcons.map((icon, j) => (
                               <motion.span
                                 key={j}
                                 whileHover={{ y: -6, rotate: 7, scale: 1.08 }}
-                                transition={{
-                                  type: "spring",
-                                  stiffness: 260,
-                                  damping: 14,
-                                }}
+                                transition={{ type: "spring", stiffness: 260, damping: 14 }}
                                 className="cursor-default"
                               >
                                 {icon}
@@ -932,9 +917,7 @@ const About = () => {
                           </div>
 
                           <div className="mt-5">
-                            <p className="text-xs uppercase tracking-widest opacity-60">
-                              Impact
-                            </p>
+                            <p className="text-xs uppercase tracking-widest opacity-60">Impact</p>
                             <p className="mt-2 text-sm opacity-80">
                               Performance-first UI + clean scalable architecture.
                             </p>
@@ -943,10 +926,7 @@ const About = () => {
                       </div>
 
                       <div className="mt-8 flex flex-wrap items-center justify-end gap-4">
-                        <Link
-                          to="/projects"
-                          className="btn btn-outline btn-primary rounded-full"
-                        >
+                        <Link to="/projects" className="btn btn-outline btn-primary rounded-full">
                           See Projects
                         </Link>
                       </div>
@@ -963,13 +943,15 @@ const About = () => {
       <section className="text-center mb-40">
         <h2 className="text-3xl font-bold mb-6">Let's Work Together 🚀</h2>
         <p className="text-gray-400 max-w-2xl mx-auto mb-8">
-          I am always excited to collaborate on innovative projects. Let’s connect
-          and build something amazing together!
+          I am always excited to collaborate on innovative projects. Let’s connect and build something
+          amazing together!
         </p>
+
         <div className="flex justify-center gap-4">
           <button className="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all shadow-lg font-bold">
             <Link to="/contact">Let’s Connect</Link>
           </button>
+
           <a
             href="/AjayGour_Resume.pdf"
             download
@@ -1021,9 +1003,7 @@ function EducationTimeline() {
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className={`relative mb-24 flex ${
-            i % 2 === 0 ? "justify-start" : "justify-end"
-          }`}
+          className={`relative mb-24 flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}
         >
           <div className="absolute left-1/2 -translate-x-1/2 w-5 h-5 bg-cyan-400 rounded-full shadow-lg animate-pulse z-10"></div>
           <motion.div
