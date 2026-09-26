@@ -1,25 +1,23 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Navbar from "./pages/Navbar.jsx";
-import Home from "./pages/Home.jsx";
-import About from './pages/About.jsx';
-import Contact from './pages/Contact.jsx';
-import Projects from './pages/Projects.jsx';
-import Skills from './pages/Skills.jsx';
+
+import Navbar from "./pages/Navbar";
+import Home from "./pages/Home";
+import GlowCursor from "./components/GlowCursor";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Navbar must be inside BrowserRouter */}
+      <GlowCursor />
+
       <Navbar />
 
-      {/* Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/skills" element={<Skills />} />
-        <Route path="/contact" element={<Contact />} />
+        <Route path="/about" element={<Home />} />
+        <Route path="/projects" element={<Home />} />
+        <Route path="/skills" element={<Home />} />
+        <Route path="/contact" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

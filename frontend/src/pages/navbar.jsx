@@ -1,95 +1,97 @@
-import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { FiDownload } from "react-icons/fi";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import resume from "../assets/FullStackResume.pdf";
+import {
+  FaGithub,
+  FaLinkedin,
+  FaBars,
+  FaTimes,
+  FaArrowRight,
+} from "react-icons/fa";
 
-const Navbar = () => {
-  const [theme, setTheme] = useState("light");
+const navItems = [
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#about" },
+  { label: "Projects", href: "#projects" },
+  { label: "Skills", href: "#skills" },
+  { label: "Contact", href: "#contact" },
+];
 
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("portfolioTheme") || "light";
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    setTheme(savedTheme);
-  }, []);
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
 
-  const handleThemeChange = (e) => {
-    const selectedTheme = e.target.value;
-    setTheme(selectedTheme);
-    localStorage.setItem("portfolioTheme", selectedTheme);
-    document.documentElement.setAttribute("data-theme", selectedTheme);
+  const scrollTo = (id) => {
+    setOpen(false);
+
+    const element = document.querySelector(id);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-base-100 shadow-md">
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-primary">
-          Ajay Gour
+    <header className="navbar">
+      <div className="nav-inner">
+        <Link to="/" className="logo" onClick={() => scrollTo("#home")}>
+          <span className="logo-mark">A</span>
+
+          <div>
+            <span className="logo-name">Ajay Gour</span>
+            <span className="logo-sub">Developer / Founder</span>
+          </div>
         </Link>
 
-        {/* Links */}
-        <ul className="hidden md:flex gap-8 text-base-content font-medium">
-          <li>
-            <Link to="/about" className="hover:text-primary">
-              About
-            </Link>
-          </li>
-          <li>
-            <Link to="/projects" className="hover:text-primary">
-              Projects
-            </Link>
-          </li>
-          <li>
-            <Link to="/skills" className="hover:text-primary">
-              Skills
-            </Link>
-          </li>
-          <li>
-            <Link to="/contact" className="hover:text-primary">
-              Contact
-            </Link>
-          </li>
-        </ul>
+        <nav className={`nav-links ${open ? "nav-open" : ""}`}>
+          {navItems.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => scrollTo(item.href)}
+              className="nav-link"
+            >
+              {item.label}
+            </button>
+          ))}
 
-        {/* Right Side */}
-        <div className="flex items-center gap-4">
           <a
-            href={resume}
+            href="https://github.com/AjayGour09"
             target="_blank"
-            rel="noopener noreferrer"
-            className="btn btn-primary btn-sm"
+            rel="noreferrer"
+            className="nav-social"
+            aria-label="GitHub"
           >
-            <FiDownload /> Resume
+            <FaGithub />
           </a>
 
-          <select
-            className="select select-bordered select-sm"
-            value={theme}
-            onChange={handleThemeChange}
+          <a
+            href="https://www.linkedin.com/in/ajay-gour09/"
+            target="_blank"
+            rel="noreferrer"
+            className="nav-social"
+            aria-label="LinkedIn"
           >
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-            <option value="claude">Claude</option>
-            <option value="spotify">Spotify</option>
-            <option value="vscode">VSCode</option>
-            <option value="black">Black</option>
-            <option value="corporate">Corporate</option>
-            <option value="ghibli">Ghibli</option>
-            <option value="gourmet">Gourmet</option>
-            <option value="luxury">Luxury</option>
-            <option value="mintlify">Mintlify</option>
-            <option value="pastel">Pastel</option>
-            <option value="perplexity">Perplexity</option>
-            <option value="shadcn">Shadcn</option>
-            <option value="slack">Slack</option>
-            <option value="soft">Soft</option>
-            <option value="valorant">Valorant</option>
-          </select>
-        </div>
-      </div>
-    </nav>
-  );
-};
+            <FaLinkedin />
+          </a>
 
-export default Navbar;
+          <a
+            href="#contact"
+            onClick={() => setOpen(false)}
+            className="nav-cta"
+          >
+            Let's Talk <FaArrowRight />
+          </a>
+        </nav>
+
+        <button
+          className="mobile-menu"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          {open ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+    </header>
+  );
+}
